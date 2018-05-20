@@ -103,43 +103,43 @@ public class MainForm {
         consolePanel.add(timelineText);
         consolePanel.add(lineText);
         container.add(consolePanel, new GridBagConstraints(0, 0, 1, 1, 1, consolePanelWeightY, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        
-        
-        JTextArea editorText = new JTextArea();
+                
+        JTextArea editorText = new JTextArea();    
         editorText.setLineWrap(true);
         editorText.setWrapStyleWord(true);
         editorText.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                String text = editorText.getText();
-                editorText.setCaretPosition(editorText.viewToModel(e.getPoint()));
-                int caretPosition = editorText.getCaretPosition();
+                if ( !playButton.isEnabled() ) {
+                    String text = editorText.getText();
+                    editorText.setCaretPosition(editorText.viewToModel(e.getPoint()));
+                    int caretPosition = editorText.getCaretPosition();
 
-                while ( text.length() > caretPosition && text.charAt(caretPosition) != ' '  ) {
-                    caretPosition++;
-                }
-                
-                int endIndex = caretPosition;
-                String selectedText = text.substring(0, endIndex);
-                
-                int numberOfLine = 0;
-                try {
-                    numberOfLine = Integer.parseInt( lineText.getText() );
-                } catch (Exception ex) {
+                    while ( text.length() > caretPosition && text.charAt(caretPosition) != ' '  ) {
+                        caretPosition++;
+                    }
 
+                    int endIndex = caretPosition;
+                    String selectedText = text.substring(0, endIndex);
+
+                    int numberOfLine = 0;
+                    try {
+                        numberOfLine = Integer.parseInt( lineText.getText() );
+                    } catch (Exception ex) {
+
+                    }
+                    String endTime = timelineText.getText() + ",000";
+
+                    System.out.println( numberOfLine );
+                    System.out.println( String.format("%s --> %s", lastTime, endTime ) );
+                    System.out.println( selectedText );
+                    System.out.println( " ");
+
+                    lastTime = endTime;
+                    editorText.setText( text.substring(endIndex) );
+                    numberOfLine++;
+                    lineText.setText( "" + numberOfLine);
                 }
-                String endTime = timelineText.getText() + ",000";
-                
-                System.out.println( numberOfLine );
-                System.out.println( String.format("%s --> %s", lastTime, endTime ) );
-                System.out.println( selectedText );
-                System.out.println( " ");
-                
-                lastTime = endTime;
-                editorText.setText( text.substring(endIndex) );
-                numberOfLine++;
-                lineText.setText( "" + numberOfLine);
-                
             }
             @Override
             public void mousePressed(MouseEvent e) { }
@@ -151,7 +151,10 @@ public class MainForm {
             public void mouseExited(MouseEvent e) { }
         });
         
-        container.add(editorText, new GridBagConstraints(0, 1, 1, 1, 1, 1 - consolePanelWeightY, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        JScrollPane scroll = new JScrollPane(editorText);
+        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        
+        container.add(scroll, new GridBagConstraints(0, 1, 1, 1, 1, 1 - consolePanelWeightY, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
    
         frame.setVisible(true);
     }        
